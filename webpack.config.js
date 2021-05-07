@@ -16,4 +16,5 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".json"],
   },
+  watch: true,
 };

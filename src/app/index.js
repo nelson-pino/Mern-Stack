@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+import App from "./App";
 
-class App extends Component {
-  render() {
-    return <h1>Hello Word with React!!!</h1>;
-  }
-}
+<App />;
 
 render(<App />, document.getElementById("app"));
