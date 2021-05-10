@@ -7,28 +7,47 @@ class App extends Component {
       title: "",
       description: "",
       tasks: [],
+      _id: "",
     };
     this.addTask = this.addTask.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   addTask(e) {
-    fetch("/api/tasks", {
-      method: "POST",
-      body: JSON.stringify(this.state),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        M.toast({ html: "Task Saved" });
-        this.setState({ title: "", description: "" });
-        this.GetTasks();
+    if (this.state._id) {
+      fetch(`/api/tasks/${this.state._id}`, {
+        method: "PUT",
+        body: JSON.stringify(this.state),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       })
-      .catch((error) => console.log(error));
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          this.setState({ title: "", description: "", _id: "" });
+          M.toast({ html: "Task Update..." });
+          this.GetTasks();
+        });
+    } else {
+      fetch("/api/tasks", {
+        method: "POST",
+        body: JSON.stringify(this.state),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          M.toast({ html: "Task Saved" });
+          this.setState({ title: "", description: "" });
+          this.GetTasks();
+        })
+        .catch((error) => console.log(error));
+    }
     e.preventDefault();
   }
 
@@ -61,6 +80,19 @@ class App extends Component {
           this.GetTasks();
         });
     }
+  }
+
+  editTask(id) {
+    fetch(`/api/tasks/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          title: data.title,
+          description: data.description,
+          _id: data._id,
+        });
+      });
   }
 
   handleChange(e) {
@@ -130,7 +162,10 @@ class App extends Component {
                         <td>{task.title}</td>
                         <td>{task.description}</td>
                         <td>
-                          <button className="btn light-blue darken-4">
+                          <button
+                            className="btn light-blue darken-4"
+                            onClick={() => this.editTask(task._id)}
+                          >
                             <i className="material-icons">edit</i>
                           </button>
                           <button
