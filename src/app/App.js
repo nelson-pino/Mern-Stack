@@ -45,6 +45,24 @@ class App extends Component {
       });
   }
 
+  deleteTask(id) {
+    if (confirm("Esta seguro de eliminar la tarea...?")) {
+      fetch(`/api/tasks/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          M.toast({ html: "Task Deleted" });
+          this.GetTasks();
+        });
+    }
+  }
+
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({
@@ -118,6 +136,7 @@ class App extends Component {
                           <button
                             className="btn light-blue darken-4"
                             style={{ margin: "1px" }}
+                            onClick={() => this.deleteTask(task._id)}
                           >
                             <i className="material-icons">delete</i>
                           </button>
